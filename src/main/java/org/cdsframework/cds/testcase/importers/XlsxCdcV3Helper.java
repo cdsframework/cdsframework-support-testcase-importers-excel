@@ -58,7 +58,7 @@ import org.opencds.vmr.v1_0.schema.SubstanceAdministrationProposal;
  *
  * @author HLN Consulting, LLC
  */
-public class XlsxV3Helper {
+public class XlsxCdcV3Helper {
 
     private final static LogUtils logger = LogUtils.getLogger(XlsxCdcHelper.class);
 

@@ -83,7 +83,7 @@ public class XlsxImporter extends TestCaseImporter {
                 XlsxV2Helper.importFromWorkBook(wb, callback);
             } else {
                 logger.info("path category: V3");
-                XlsxV3Helper.importFromWorkBook(wb, callback);
+                XlsxCdcV3Helper.importFromWorkBook(wb, callback);
             }
         } catch (FileNotFoundException e) {
             logger.error(e);
