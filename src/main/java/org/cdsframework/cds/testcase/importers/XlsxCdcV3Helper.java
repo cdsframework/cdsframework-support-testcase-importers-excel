@@ -60,7 +60,7 @@ import org.opencds.vmr.v1_0.schema.SubstanceAdministrationProposal;
  */
 public class XlsxCdcV3Helper {
 
-    private final static LogUtils logger = LogUtils.getLogger(XlsxCdcHelper.class);
+    private final static LogUtils logger = LogUtils.getLogger(XlsxCdcV3Helper.class);
 
     public static void importFromWorkBook(XSSFWorkbook wb, TestImportCallback callback)
             throws CdsException, FileNotFoundException, IOException, DatatypeConfigurationException {
@@ -79,18 +79,18 @@ public class XlsxCdcV3Helper {
         vaccineGroupMap.put("Tdap", "200");
         vaccineGroupMap.put("Td", "200");
         vaccineGroupMap.put("Td", "200");
-        vaccineGroupMap.put("Rota", "820");
-        vaccineGroupMap.put("Var", "600");
-        vaccineGroupMap.put("Hib", "300");
+        vaccineGroupMap.put("ROTA", "820");
+        vaccineGroupMap.put("VAR", "600");
+        vaccineGroupMap.put("HIB", "300");
         vaccineGroupMap.put("HepA", "810");
         vaccineGroupMap.put("HepB", "100");
-        vaccineGroupMap.put("Flu", "800");
+        vaccineGroupMap.put("FLU", "800");
         vaccineGroupMap.put("HPV", "840");
         vaccineGroupMap.put("MCV", "830");
         vaccineGroupMap.put("MMR", "500");
         vaccineGroupMap.put("PCV", "750");
         vaccineGroupMap.put("POL", "400");
-        vaccineGroupMap.put("Zoster", "620");
+        vaccineGroupMap.put("ZOSTER", "620");
         vaccineGroupMap.put("MeningB", "835");
         List<String> reasonsToMap = new ArrayList<String>();
         List<String> recommendationToMap = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class XlsxCdcV3Helper {
                 try {
                     XSSFCell testDobCell = row.getCell(2);
                     testDob = testDobCell.getDateCellValue();
-                    logger.debug("Got testDob: ", testDob);
+                    logger.info("Got testDob: ", testDob);
                 } catch (Exception e) {
                     logger.error("Error getting testDob!");
                     logger.error(e);
@@ -180,7 +180,7 @@ public class XlsxCdcV3Helper {
                 try {
                     XSSFCell testGenderCell = row.getCell(3);
                     testGender = testGenderCell.getStringCellValue();
-                    logger.debug("Got testGender: ", testGender);
+                    logger.info("Got testGender: ", testGender);
                 } catch (Exception e) {
                     logger.error("Error getting testGender!");
                     logger.error(e);
@@ -197,10 +197,11 @@ public class XlsxCdcV3Helper {
                     }
                     vaccineGroup = vaccineGroupMap.get(vaccineGroup);
                     testCase.addProperty("vaccineGroup", vaccineGroup, TestCasePropertyType.STRING);
-                    logger.debug("Got vaccineGroup: " + vaccineGroup);
+                    logger.info("Got vaccineGroup: " + vaccineGroup);
                 } catch (Exception e) {
                     logger.error("Error getting vaccineGroup!");
                     logger.error(e);
+                    throw new CdsException("Vaccine Group did not map!");
                 }
 
                 // execution date
@@ -209,7 +210,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell executionDateCell = row.getCell(55);
                     executionDate = executionDateCell.getDateCellValue();
                     testCase.setExecutiondate(executionDate);
-                    logger.debug("Got executionDate: " + executionDate);
+                    logger.info("Got executionDate: " + executionDate);
                 } catch (Exception e) {
                     logger.error("Error getting executionDate!");
                     logger.error(e);
@@ -222,7 +223,7 @@ public class XlsxCdcV3Helper {
                     testGroup = testGroupCell.getStringCellValue();
                     testCase.setGroupName(vaccineGroup + " - " + testGroup);
                     testCase.setRuletotest("Evaluation Test Type: " + testGroup);
-                    logger.debug("Got testGroup: " + testGroup);
+                    logger.info("Got testGroup: " + testGroup);
                 } catch (Exception e) {
                     logger.error("Error getting testGroup!");
                     logger.error(e);
@@ -234,7 +235,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell addedDateCell = row.getCell(57);
                     addedDate = addedDateCell.getDateCellValue();
                     testCase.setNotes(testCase.getNotes() + "Date Added: " + addedDate + "\n");
-                    logger.debug("Got addedDate: " + addedDate);
+                    logger.info("Got addedDate: " + addedDate);
                 } catch (Exception e) {
                     logger.error("Error getting addedDate!");
                     logger.error(e);
@@ -246,7 +247,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell updatedDateCell = row.getCell(58);
                     updatedDate = updatedDateCell.getDateCellValue();
                     testCase.setNotes(testCase.getNotes() + "Date Updated: " + updatedDate + "\n");
-                    logger.debug("Got updatedDate: " + updatedDate);
+                    logger.info("Got updatedDate: " + updatedDate);
                 } catch (Exception e) {
                     logger.error("Error getting updatedDate!");
                     logger.error(e);
@@ -258,7 +259,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell forecastTypeCell = row.getCell(59);
                     forecastType = forecastTypeCell.getStringCellValue();
                     testCase.setRuletotest("Forecast Test Type: " + forecastType);
-                    logger.debug("Got forecastType: ", forecastType);
+                    logger.info("Got forecastType: ", forecastType);
                     if (!recommendationToMap.contains(forecastType)) {
                         recommendationToMap.add(forecastType);
                     }
@@ -272,7 +273,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell reasonForChangeCell = row.getCell(60);
                     reasonForChange = reasonForChangeCell.getStringCellValue();
                     testCase.setRuletotest(testCase.getRuletotest() + "\nReason for Change: " + reasonForChange);
-                    logger.debug("Got reasonForChange: ", reasonForChange);
+                    logger.info("Got reasonForChange: ", reasonForChange);
                 } catch (Exception e) {
                     logger.error("Error getting reasonForChange!");
                     logger.error(e);
@@ -283,7 +284,7 @@ public class XlsxCdcV3Helper {
                     XSSFCell generalDescriptionCell = row.getCell(62);
                     generalDescription = generalDescriptionCell.getStringCellValue();
                     testCase.setRuletotest(testCase.getRuletotest() + "\nGeneral Description: " + generalDescription);
-                    logger.debug("Got generalDescription: ", generalDescription);
+                    logger.info("Got generalDescription: ", generalDescription);
                 } catch (Exception e) {
                     logger.error("Error getting generalDescription!");
                     logger.error(e);
@@ -307,7 +308,7 @@ public class XlsxCdcV3Helper {
                     }
 
                     if (dateDose != null) {
-                        logger.debug("Got dateDose" + doseNum + ": " + dateDose);
+                        logger.info("Got dateDose" + doseNum + ": " + dateDose);
 
                         rowIndex++;
                         rowIndex++;
@@ -345,7 +346,7 @@ public class XlsxCdcV3Helper {
                             } else if ("EXTRANEOUS".equalsIgnoreCase(evalValueDose)) {
                                 evalValueDose = "ACCEPTED";
                             }
-                            logger.debug("Got evalValueDose" + doseNum + ": " + evalValueDose);
+                            logger.info("Got evalValueDose" + doseNum + ": " + evalValueDose);
                         } catch (Exception e) {
                             logger.error("Error getting evalValueDose" + doseNum + "!");
                             logger.error(e);
@@ -387,7 +388,7 @@ public class XlsxCdcV3Helper {
                                     logger.warn("Skipping evaluation reason - not mapped: ", evalInterDose);
                                     evalInterDose = null;
                                 }
-                                logger.debug("Got evalInterDose" + doseNum + ": " + evalInterDose);
+                                logger.info("Got evalInterDose" + doseNum + ": " + evalInterDose);
                                 if (evalInterDose != null) {
                                     reasons.add(CdsObjectFactory.getCD(evalInterDose, Config.getCodeSystemOid("EVALUATION_INTERPRETATION")));
                                 }
@@ -439,9 +440,13 @@ public class XlsxCdcV3Helper {
                 Date earliestDate = null;
                 try {
                     XSSFCell earliestDateCell = row.getCell(51);
-                    earliestDate = earliestDateCell.getDateCellValue();
-                    testCase.setNotes(testCase.getNotes() + "Earliest Date: " + earliestDate + "\n");
-                    logger.info("Got earliestDate: " + earliestDate);
+                    if (earliestDateCell != null) {
+                        earliestDate = earliestDateCell.getDateCellValue();
+                        testCase.setNotes(testCase.getNotes() + "Earliest Date: " + earliestDate + "\n");
+                        logger.info("Got earliestDate: " + earliestDate);
+                    } else {
+                        logger.info("Got earliestDate: null");
+                    }
                 } catch (Exception e) {
                     logger.error("Error getting earliestDate!");
                     logger.error(e);
@@ -451,9 +456,13 @@ public class XlsxCdcV3Helper {
                 Date recommendedDate = null;
                 try {
                     XSSFCell recommendedDateCell = row.getCell(52);
-                    recommendedDate = recommendedDateCell.getDateCellValue();
-                    testCase.setNotes(testCase.getNotes() + "Recommended Date: " + recommendedDate + "\n");
-                    logger.info("Got recommendedDate: " + recommendedDate);
+                    if (recommendedDateCell != null) {
+                        recommendedDate = recommendedDateCell.getDateCellValue();
+                        testCase.setNotes(testCase.getNotes() + "Recommended Date: " + recommendedDate + "\n");
+                        logger.info("Got recommendedDate: " + recommendedDate);
+                    } else {
+                        logger.info("Got recommendedDate: null");
+                    }
                 } catch (Exception e) {
                     logger.error("Error getting recommendedDate!");
                     logger.error(e);
@@ -463,9 +472,13 @@ public class XlsxCdcV3Helper {
                 Date pastDueDate = null;
                 try {
                     XSSFCell pastDueDateCell = row.getCell(53);
-                    pastDueDate = pastDueDateCell.getDateCellValue();
-                    testCase.setNotes(testCase.getNotes() + "Past Due Date: " + pastDueDate + "\n");
-                    logger.info("Got pastDueDate: " + pastDueDate);
+                    if (pastDueDateCell != null) {
+                        pastDueDate = pastDueDateCell.getDateCellValue();
+                        testCase.setNotes(testCase.getNotes() + "Past Due Date: " + pastDueDate + "\n");
+                        logger.info("Got pastDueDate: " + pastDueDate);
+                    } else {
+                        logger.info("Got pastDueDate: null");
+                    }
                 } catch (Exception e) {
                     logger.error("Error getting pastDueDate!");
                     logger.error(e);
