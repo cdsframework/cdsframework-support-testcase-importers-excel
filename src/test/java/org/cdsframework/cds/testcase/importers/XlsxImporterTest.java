@@ -20,6 +20,7 @@
  */
 package org.cdsframework.cds.testcase.importers;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -116,22 +117,24 @@ public class XlsxImporterTest {
 
     /**
      * Test of importFromFile method, of class XlsxV2Helper.
+     *
      * @throws Exception
      */
-    @Ignore
+//    @Ignore
     @Test
     public void testImportFromFileV2a() throws Exception {
         logger.info("importFromFile");
-        String filename = "/Volumes/HDD2/Users/fuzzy/IdeaProjects/cdsframework-client-support/cdsframework-support-testcase-importers-excel/CDSi-Test-Cases-V1-0.xlsx";
+        new File("imported-tests-cdc").mkdirs();
+
+        String filename = "cdsi-healthy-childhood-and-adult-test-cases-v3.5-508.xlsx";
         XlsxImporter xlsxImporter = new XlsxImporter();
         xlsxImporter.importFromFile(filename, new TestImportCallback() {
 
             @Override
             public void callback(TestCaseWrapper testcase, String Group, boolean success) throws CdsException {
                 try {
-
-                    Files.createDirectories(Paths.get("/Volumes/HDD2/Users/fuzzy/IdeaProjects/cdsframework-client-support/cdsframework-support-testcase-importers-excel/imported-tests-cdc/" + testcase.getVaccineCodeFromGroup()));
-                    CdsObjectAssist.cdsObjectToFile(testcase.getTestCase(), "/Volumes/HDD2/Users/fuzzy/IdeaProjects/cdsframework-client-support/cdsframework-support-testcase-importers-excel/imported-tests-cdc/" + testcase.getVaccineCodeFromGroup(), testcase.getEncodedName());
+                    Files.createDirectories(Paths.get("imported-tests-cdc/" + testcase.getVaccineCodeFromGroup()));
+                    CdsObjectAssist.cdsObjectToFile(testcase.getTestCase(), "imported-tests-cdc/" + testcase.getVaccineCodeFromGroup(), testcase.getEncodedName());
                 } catch (FileNotFoundException e) {
                     throw new CdsException(e.getMessage());
                 } catch (IOException e) {

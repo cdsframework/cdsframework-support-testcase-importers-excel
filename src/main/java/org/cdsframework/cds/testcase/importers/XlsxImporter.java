@@ -26,8 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.datatype.DatatypeConfigurationException;
-import org.apache.poi.POIXMLProperties;
-import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.cdsframework.exceptions.CdsException;
 
@@ -37,61 +37,68 @@ import org.cdsframework.exceptions.CdsException;
  */
 public class XlsxImporter extends TestCaseImporter {
 
-	public XlsxImporter() {
-		super(XlsxImporter.class);
-	}
+    public XlsxImporter() {
+        super(XlsxImporter.class);
+    }
 
-	public void importFromFile(byte[] data, TestImportCallback callback)
-			throws CdsException, FileNotFoundException, IOException,
-			DatatypeConfigurationException {
-		importFromInputStream(new ByteArrayInputStream(data), callback);
-	}
+    public void importFromFile(byte[] data, TestImportCallback callback)
+            throws CdsException, FileNotFoundException, IOException,
+            DatatypeConfigurationException {
+        importFromInputStream(new ByteArrayInputStream(data), callback);
+    }
 
     @Override
-	public void importFromFile(String filename, TestImportCallback callback)
-			throws CdsException {
-		try {
-			importFromInputStream(new FileInputStream(filename), callback);
-		} catch (FileNotFoundException e) {
-			throw new CdsException(e.getMessage());
-		} finally {
+    public void importFromFile(String filename, TestImportCallback callback)
+            throws CdsException {
+        try {
+            importFromInputStream(new FileInputStream(filename), callback);
+        } catch (FileNotFoundException e) {
+            throw new CdsException(e.getMessage());
+        } finally {
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void importFromInputStream(InputStream inputStream,
-			TestImportCallback callback) throws CdsException {
-		final String METHODNAME = "importFromInputStream ";
-		logger.logBegin(METHODNAME);
-		try {
+    @Override
+    public void importFromInputStream(InputStream inputStream,
+            TestImportCallback callback) throws CdsException {
+        final String METHODNAME = "importFromInputStream ";
+        logger.logBegin(METHODNAME);
+        try {
 
-			XSSFWorkbook wb = new XSSFWorkbook(inputStream);
-			POIXMLProperties properties = wb.getProperties();
-			CoreProperties coreProperties = properties.getCoreProperties();
-			String category = coreProperties.getCategory();
-			logger.info("category: " + category);
-			if ("V1".equals(category)) {
-				XlsxV1Helper.importFromWorkBook(wb, callback);
-			} else if ("CDC".equals(category)) {
-				XlsxCdcHelper.importFromWorkBook(wb, callback);
-			} else {
-				XlsxV2Helper.importFromWorkBook(wb, callback);
-			}
-		} catch (FileNotFoundException e) {
-			logger.error(e);
-			throw new CdsException(e.getMessage());
-		} catch (CdsException e) {
-			logger.error(e);
-			throw new CdsException(e.getMessage());
-		} catch (IOException e) {
-			logger.error(e);
-			throw new CdsException(e.getMessage());
-		} catch (DatatypeConfigurationException e) {
-			logger.error(e);
-			throw new CdsException(e.getMessage());
-		} finally {
-			logger.logEnd(METHODNAME);
-		}
-	}
+            XSSFWorkbook wb = new XSSFWorkbook(inputStream);
+            logger.info("wb.getNumberOfSheets()=", wb.getNumberOfSheets());
+            POIXMLProperties properties = wb.getProperties();
+            CoreProperties coreProperties = properties.getCoreProperties();
+            String category = coreProperties.getCategory();
+            logger.info("category: " + category);
+            if ("V1".equals(category)) {
+                logger.info("path category: V1");
+                XlsxV1Helper.importFromWorkBook(wb, callback);
+            } else if ("CDC".equals(category)) {
+                logger.info("path category: CDC");
+                XlsxCdcHelper.importFromWorkBook(wb, callback);
+            } else if ("V2".equals(category)) {
+                logger.info("path category: V2");
+                XlsxV2Helper.importFromWorkBook(wb, callback);
+            } else {
+                logger.info("path category: V3");
+                XlsxV3Helper.importFromWorkBook(wb, callback);
+            }
+        } catch (FileNotFoundException e) {
+            logger.error(e);
+            throw new CdsException(e.getMessage());
+        } catch (CdsException e) {
+            logger.error(e);
+            throw new CdsException(e.getMessage());
+        } catch (IOException e) {
+            logger.error(e);
+            throw new CdsException(e.getMessage());
+        } catch (DatatypeConfigurationException e) {
+            logger.error(e);
+            throw new CdsException(e.getMessage());
+        } finally {
+            logger.logEnd(METHODNAME);
+        }
+    }
 }

@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.datatype.DatatypeConfigurationException;
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;

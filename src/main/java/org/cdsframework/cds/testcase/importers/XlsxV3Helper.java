@@ -27,8 +27,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
-import org.apache.poi.ooxml.POIXMLProperties;
-import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -49,53 +47,45 @@ import org.opencds.vmr.v1_0.schema.SubstanceAdministrationEvent;
  *
  * @author HLN Consulting, LLC
  */
-public class XlsxV2Helper {
+public class XlsxV3Helper {
 
-    private final static LogUtils logger = LogUtils.getLogger(XlsxV2Helper.class);
+    private final static LogUtils logger = LogUtils.getLogger(XlsxV3Helper.class);
 
     public static void importFromWorkBook(XSSFWorkbook wb, TestImportCallback callback)
             throws CdsException, FileNotFoundException, IOException, DatatypeConfigurationException {
         List<String> importedTestCases = new ArrayList<String>();
-        POIXMLProperties properties = wb.getProperties();
-        CoreProperties coreProperties = properties.getCoreProperties();
-        String category = coreProperties.getCategory();
-        logger.trace("category: " + category);
-        XSSFSheet sheet = wb.getSheet("Test Coverage Summary");
+        XSSFSheet sheetAt = wb.getSheetAt(0);
+        logger.info("sheetAt.getSheetName()=", sheetAt.getSheetName());
+        XSSFSheet sheet = wb.getSheet("FITS Exported Testcases");
         if (sheet == null) {
-            throw new CdsException("Bad format - missing Test Coverage Summary sheet");
+            throw new CdsException("Bad format - missing FITS Exported Testcases sheet");
         }
         int lastRowNum = sheet.getLastRowNum();
         logger.trace("LastRowNum: " + lastRowNum);
         int i = 0;
         int testCount = 0;
         while (i < lastRowNum) {
+            logger.info("processing row: ", i);
             i++;
             XSSFRow row = sheet.getRow(i);
             if (row != null) {
                 XSSFCell cell = row.getCell(0);
                 if (cell != null) {
-                    String cellFormula = cell.getCellFormula();
-                    logger.info("importing from cellFormula=" + cellFormula);
-                    String testSheetName = cellFormula.substring(1, cellFormula.indexOf("!") - 1);
-                    logger.trace("testSheetName=" + testSheetName);
-                    XSSFSheet testSheet = wb.getSheet(testSheetName);
-                    if (testSheet == null) {
-                        continue;
-                    }
-                    logger.trace("testSheet=" + testSheet);
-                    String testSheetCellStart = cellFormula.substring(cellFormula.indexOf("!") + 1);
-                    logger.trace("testSheetCellStart=" + testSheetCellStart);
-                    int testCurrentRowNum = Integer.parseInt(testSheetCellStart.substring(3)) - 1;
-                    XSSFRow testCurrentRow = testSheet.getRow(testCurrentRowNum);
+                    logger.info("cell string value: ", cell.getStringCellValue());
+                    XSSFSheet testSheet = sheet;
+                    String testSheetName = sheet.getSheetName();
+                    logger.info("testSheetName=" + testSheetName);
+                    int testCurrentRowNum = row.getRowNum();
+                    XSSFRow testCurrentRow = row;
                     XSSFCell testNumberCell = testCurrentRow.getCell(0);
                     String testNumber = testNumberCell.getStringCellValue();
-                    logger.trace("testNumber=" + testNumber);
-                    XSSFCell name = testCurrentRow.getCell(2);
+                    logger.info("testNumber=" + testNumber);
+                    XSSFCell name = testCurrentRow.getCell(1);
                     if (!name.getStringCellValue().isEmpty()) {
                         String localName = name.getStringCellValue();
-                        logger.trace("localName=" + localName);
+                        logger.info("localName=" + localName);
                         String globalName = testSheetName + ": " + localName;
-                        logger.trace("globalName=" + globalName);
+                        logger.info("globalName=" + globalName);
                         testCount++;
                         TestCaseWrapper testCase = TestCaseWrapper.getTestCaseWrapper();
 
@@ -103,12 +93,12 @@ public class XlsxV2Helper {
                         String location = testSheetName + ", test # " + testNumber + ", row # " + (testCurrentRowNum + 1);
                         testCase.setFileLocation(location);
 
-                        logger.trace(location);
+                        logger.info(location);
 
                         // test name + vaccine group
                         testCase.setName(localName);
                         String encodedName = XlsxImporterUtils.getShaHashFromString(globalName);
-                        logger.trace("encodedName=" + encodedName);
+                        logger.info("encodedName=" + encodedName);
                         testCase.setEncodedName(encodedName);
                         if (importedTestCases.contains(encodedName)) {
                             int c = 1;
@@ -121,16 +111,13 @@ public class XlsxV2Helper {
                             }
                         }
                         importedTestCases.add(encodedName);
-                        logger.trace("    Test name: " + testCase.getName());
-                        XSSFCell vaccineGroupCell = testCurrentRow.getCell(10);
+                        logger.info("    Test name: " + testCase.getName());
+                        XSSFCell vaccineGroupCell = testCurrentRow.getCell(54);
                         String vaccineGroup = null;
-                        try {
-                            double numericCellValue = vaccineGroupCell.getNumericCellValue();
-                            vaccineGroup = String.valueOf((int) numericCellValue);
-                        } catch (IllegalStateException e) {
+
                             vaccineGroup = vaccineGroupCell.getStringCellValue();
-                        }
-                        logger.trace("    Vaccine group: " + vaccineGroup);
+
+                        logger.info("    Vaccine group: " + vaccineGroup);
 
                         // test focus
                         testCurrentRowNum++;
