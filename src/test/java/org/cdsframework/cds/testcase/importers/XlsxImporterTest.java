@@ -120,7 +120,7 @@ public class XlsxImporterTest {
      *
      * @throws Exception
      */
-//    @Ignore
+    @Ignore
     @Test
     public void testImportFromFileV2a() throws Exception {
         logger.info("importFromFile");
