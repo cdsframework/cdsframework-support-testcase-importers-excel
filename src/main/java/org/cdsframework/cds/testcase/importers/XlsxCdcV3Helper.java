@@ -536,6 +536,7 @@ public class XlsxCdcV3Helper {
 //                        cal.add(Calendar.DATE, -1);
 //                        pastDueDate = cal.getTime();
 //                    }
+                if (!reasons.isEmpty()) {
                     testCase.addSubstanceAdministrationProposal(
                             vaccineGroup,
                             Config.getCodeSystemOid("VACCINE_GROUP"),
@@ -550,6 +551,9 @@ public class XlsxCdcV3Helper {
                             proposalValue,
                             Config.getCodeSystemOid("RECOMMENDATION_VALUE"),
                             reasons);
+                } else {
+                    testCase.setNotes(testCase.getNotes() + "Didn't add recommendation for test " + testIdCellValue + " - Forcast Test Type was empty.\n");
+                }
                 } catch (CdsException e) {
                     logger.error("addSubstanceAdministrationProposal Error @ " + location + " - " + e.getMessage());
                     logger.error(e.getMessage(), e);
