@@ -536,24 +536,24 @@ public class XlsxCdcV3Helper {
 //                        cal.add(Calendar.DATE, -1);
 //                        pastDueDate = cal.getTime();
 //                    }
-                if (!reasons.isEmpty()) {
-                    testCase.addSubstanceAdministrationProposal(
-                            vaccineGroup,
-                            Config.getCodeSystemOid("VACCINE_GROUP"),
-                            null,
-                            Config.getCodeSystemOid("VACCINE"),
-                            DateUtils.getISODateFormat(recommendedDate),
-                            DateUtils.getISODateFormat(pastDueDate),
-                            DateUtils.getISODateFormat(earliestDate),
-                            null,
-                            vaccineGroup,
-                            Config.getCodeSystemOid("VACCINE_GROUP"),
-                            proposalValue,
-                            Config.getCodeSystemOid("RECOMMENDATION_VALUE"),
-                            reasons);
-                } else {
-                    testCase.setNotes(testCase.getNotes() + "Didn't add recommendation for test " + testIdCellValue + " - Forcast Test Type was empty.\n");
-                }
+                    if (!reasons.isEmpty()) {
+                        testCase.addSubstanceAdministrationProposal(
+                                vaccineGroup,
+                                Config.getCodeSystemOid("VACCINE_GROUP"),
+                                null,
+                                Config.getCodeSystemOid("VACCINE"),
+                                DateUtils.getISODateFormat(recommendedDate),
+                                DateUtils.getISODateFormat(pastDueDate),
+                                DateUtils.getISODateFormat(earliestDate),
+                                null,
+                                vaccineGroup,
+                                Config.getCodeSystemOid("VACCINE_GROUP"),
+                                proposalValue,
+                                Config.getCodeSystemOid("RECOMMENDATION_VALUE"),
+                                reasons);
+                    } else {
+                        testCase.setNotes(testCase.getNotes() + "Didn't add recommendation for test " + testIdCellValue + " - Forcast Test Type was empty.\n");
+                    }
                 } catch (CdsException e) {
                     logger.error("addSubstanceAdministrationProposal Error @ " + location + " - " + e.getMessage());
                     logger.error(e.getMessage(), e);
